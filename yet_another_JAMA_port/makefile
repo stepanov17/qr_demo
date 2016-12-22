@@ -9,4 +9,4 @@ $(APP): $(SRC)
 	$(CC) $(SRC) $(CXXFLAGS) -o $(APP)
 
 clean:
-	rm $(APP)
+	rm -f $(APP)

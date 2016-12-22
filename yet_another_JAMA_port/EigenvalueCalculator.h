@@ -14,17 +14,23 @@ class EigenvalueCalculator {
 
 public:
 
-    typedef SquareMatrix::element_t element_t;
+
+    /**
+     * A maximum matrix order allowed.
+     */
+    static const int MAXN = 10000;
 
     /**
      * Create the eigenvalue calculator for a given square matrix M.
+     * The matrix order should not exceed 10000; otherwise
+     * no calculations will be performed.
      *
      * @param M input square matrix
      */
     EigenvalueCalculator(const SquareMatrix &M);
 
     /**
-     * Deleted copy constructor
+     * Deleted copy constructor.
      *
      * @param orig dummy
      */
@@ -37,7 +43,11 @@ public:
      */
     std::pair<SquareMatrix::row_t, SquareMatrix::row_t> getEigenvalues();
 
+
 private:
+
+    typedef SquareMatrix::element_t element_t;
+
 
     // all the below procedures refer to
     // Bowdler, Martin, Reinsch, and Wilkinson, Handbook for

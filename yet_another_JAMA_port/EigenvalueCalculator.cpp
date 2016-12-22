@@ -50,8 +50,16 @@ EigenvalueCalculator::cdiv(element_t xr, element_t xi, element_t yr, element_t y
 
 EigenvalueCalculator::EigenvalueCalculator(const SquareMatrix &M) {
 
-    mM = M;
     n = M.getN();
+    if (n > MAXN) {
+        std::cerr << "the matrix order should not exceed " << MAXN << std::endl;
+        std::cerr << "skipping calculations!" << std::endl << std::endl;
+        n = 0;
+        mV = SquareMatrix();
+    } else {
+        mM = M;
+    }
+
 
     mV = SquareMatrix(n);
     mH = SquareMatrix(n);
@@ -65,6 +73,14 @@ EigenvalueCalculator::EigenvalueCalculator(const SquareMatrix &M) {
 
 std::pair<SquareMatrix::row_t, SquareMatrix::row_t>
 EigenvalueCalculator::getEigenvalues() {
+
+    if (n == 0) { // empty matrix
+        return std::make_pair(SquareMatrix::row_t(0), SquareMatrix::row_t(0));
+    } else if (n == 1) { // nothing to do
+        element_t v = mM.accessData()[0][0];
+        return std::make_pair(
+            SquareMatrix::row_t(1, v), SquareMatrix::row_t(1, 0.));
+    }
 
     if (mM.isSymmetric()) {
         mV = mM;

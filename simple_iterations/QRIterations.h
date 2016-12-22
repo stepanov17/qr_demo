@@ -4,6 +4,11 @@
 
 #include "SquareMatrix.h"
 
+/**
+ * @class QRIterations
+ *
+ * Perform shifted QR algorithm for a given square matrix M.
+ */
 class QRIterations {
 public:
 
@@ -11,6 +16,11 @@ public:
      * QR shift type: Rayleigh, Wilkinson or none (zero)
      */
     enum shift { RAYLEIGH, WILKINSON, NONE };
+
+    /**
+     * A maximum order of the matrix to be processed.
+     */
+    static const int MAXN = 10000;
 
     /**
      * Bring matrix M to a Hessenberg form
@@ -32,6 +42,7 @@ public:
      * @param precision precision
      * @param maxIter maximum number of iterations (default value is 1e7)
      * @throw std::invalid_argument if the precision value is non-positive
+     * @throw std::invalid_argument if the matrix order exceeds MAXN
      */
     static void run(SquareMatrix            &M,
                     shift                    shiftAlgorithm,

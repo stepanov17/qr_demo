@@ -53,6 +53,10 @@ int main(int argc, char** argv) {
         if (M.getN() == 0) {
             std::cerr << "empty matrix" << std::endl;
             return 1;
+        } else if (M.getN() > QRIterations::MAXN) {
+            std::cerr << "matrix order exceeds " << QRIterations::MAXN <<
+                ", skipping calculations" << std::endl;
+            return 1;
         }
     } catch (std::exception &ex) {
         std::cerr << ex.what() << std::endl;
@@ -83,6 +87,7 @@ int main(int argc, char** argv) {
 
     SquareMatrix::row_t diag = M.diag();
 
+    // consider the simple case when all the eigenvalues are real
     std::cout << "done. main diagonal:" << std::endl;
     for (auto v: diag) { std::cout << v << " "; }
     std::cout << std::endl;

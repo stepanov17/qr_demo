@@ -7,7 +7,7 @@
 
 #include "QRIterations.h"
 
-const SquareMatrix::element_t EPS = 
+const SquareMatrix::element_t EPS =
     std::numeric_limits<SquareMatrix::element_t>::epsilon();
 
 SquareMatrix::element_t
@@ -54,6 +54,10 @@ QRIterations::run(SquareMatrix &M,
 
     int n = M.getN();
     if (n < 2) { return; } // nothing to do
+
+    if (n > MAXN) {
+        throw std::invalid_argument("matrix order is too high");
+    }
 
     std::cout << "transforming to Hessenberg form..." << std::endl;
     M = M.Hessenberg();
