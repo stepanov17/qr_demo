@@ -12,7 +12,7 @@
 int main(int argc, char** argv) {
 
     if (argc < 2) {
-        std::cerr << "usage: QRIter <matrix_file> [shift_type] [precision]" << std::endl;
+        std::cerr << "usage: qriterations <matrix_file> [shift_type] [precision]" << std::endl;
         std::cerr << "shift_type = \"none\" | \"rayleygh\" | \"wilkinson\"" << std::endl;
         return 1;
     }
