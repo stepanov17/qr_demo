@@ -144,8 +144,6 @@ SquareMatrix::QR() const {
             // form k-th Householder vector
             if (V[k][k] < 0.) { norm = -norm; }
 
-            //slow down
-            //#pragma omp parallel for shared(V)
             for (int i = k; i < n; i++) {
                 V[i][k] /= norm;
             }
@@ -155,8 +153,6 @@ SquareMatrix::QR() const {
             for (int j = k + 1; j < n; j++) {
                 element_t s = 0.;
 
-                //slow down
-                //#pragma omp parallel for shared(V) reduction(+:s)
                 for (int i = k; i < n; i++) {
                     s += V[i][k] * V[i][j];
                 }
@@ -183,13 +179,9 @@ SquareMatrix::QR() const {
             if (V[k][k] != 0.) {
                 element_t s = 0.;
 
-                //slow down
-                //#pragma omp parallel for shared(V, Q) reduction(+:s)
                 for (int i = k; i < n; i++) { s += V[i][k] * Q[i][j]; }
                 s = -s / V[k][k];
 
-                //slow down
-                //#pragma omp parallel for shared(V)
                 for (int i = k; i < n; i++) {
                     Q[i][j] += s * V[i][k];
                 }

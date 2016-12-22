@@ -410,7 +410,7 @@ EigenvalueCalculator::toSchur() {
     // store roots isolated by balance and compute matrix norm
     element_t norm = 0.;
     for (int i = 0; i < nn; i++) {
-        if (i < low | i > high) {
+        if (i < low || i > high) {
             eigRe[i] = H[i][i];
             eigIm[i] = 0.;
         }
@@ -652,14 +652,14 @@ EigenvalueCalculator::toSchur() {
     }  // while (n >= low)
 
     // back substitute to find vectors of upper triangular form
-    if (norm == 0.) { return; }
+    if (isEq(norm, 0.)) { return; }
 
     for (n0 = nn - 1; n0 >= 0; n0--) {
         p = eigRe[n0];
         q = eigIm[n0];
 
         // real vector
-        if (q == 0) {
+        if (isEq(q, 0.)) {
             int l = n0;
             H[n0][n0] = 1.;
             for (int i = n0 - 1; i >= 0; i--) {
@@ -673,7 +673,7 @@ EigenvalueCalculator::toSchur() {
                     s = r;
                 } else {
                     l = i;
-                    if (eigIm[i] == 0.) {
+                    if (isEq(eigIm[i], 0.)) {
                         if (!isEq(w, 0.)) {
                             H[i][n0] = -r / w;
                         } else {
@@ -737,7 +737,7 @@ EigenvalueCalculator::toSchur() {
                     s = sa;
                 } else {
                     l = i;
-                    if (eigIm[i] == 0) {
+                    if (isEq(eigIm[i], 0.)) {
                         std::pair<element_t, element_t> cdres =
                             cdiv(-ra, -sa, w, q);
                         H[i][n0 - 1] = cdres.first;
@@ -748,7 +748,7 @@ EigenvalueCalculator::toSchur() {
                         y = H[i + 1][i];
                         vr = (eigRe[i] - p) * (eigRe[i] - p) + eigIm[i] * eigIm[i] - q * q;
                         vi = (eigRe[i] - p) * 2. * q;
-                        if (vr == 0. & vi == 0.) {
+                        if (isEq(vr, 0.) && isEq(vi, 0.)) {
                             vr = EPS * norm * (std::abs(w) + std::abs(q) +
                                 std::abs(x) + std::abs(y) + std::abs(z));
                         }
@@ -783,7 +783,7 @@ EigenvalueCalculator::toSchur() {
 
     // vectors of isolated roots
     for (int i = 0; i < nn; i++) {
-        if (i < low | i > high) {
+        if (i < low || i > high) {
             for (int j = i; j < nn; j++) {
                 V[i][j] = H[i][j];
             }
