@@ -1,0 +1,7 @@
+examples:
+
+./qriterations test100.txt none         :    eigenvalues are 100., 99., 98., ..., 1.
+./qriterations test500.txt wilkinson    :    eigenvalues are 10.x250 times and 1.x250 times
+
+
+for docs generation execute "doxygen docs"
