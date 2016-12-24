@@ -19,12 +19,12 @@ public:
     /**
      * Matrix row type.
      */
-    typedef std::vector<double> row_t;
+    typedef std::vector<element_t> row_t;
 
     /**
      * Matrix data type.
      */
-    typedef std::vector<std::vector<double> > data_t;
+    typedef std::vector<std::vector<element_t> > data_t;
 
     /**
      * Construct a zero square matrix having a given order.

@@ -13,6 +13,16 @@
 #include <limits>
 
 
+// check if x is approximately zero
+bool isZero(SquareMatrix::element_t x) {
+
+    // hopefully this precision is enough
+    // in principle, can use even lower value here, but
+    // not sure if that makes sense
+    SquareMatrix::element_t eps =
+        std::numeric_limits<SquareMatrix::element_t>::epsilon();
+    return (std::abs(x) < eps);
+}
 
 SquareMatrix::SquareMatrix(std::size_t n_p) : n(n_p) {
 
@@ -78,10 +88,8 @@ SquareMatrix::Hessenberg() const {
 
             // Givens rotation
             element_t h = std::hypot(a[k][k - 1], a[i][k - 1]);
-            if (std::abs(h) <=
-                std::numeric_limits<SquareMatrix::element_t>::epsilon()) {
-                continue;
-            }
+            if (isZero(h)) { continue; }
+
             element_t c =  a[k][k - 1] / h;
             element_t s = -a[i][k - 1] / h;
 
@@ -176,9 +184,9 @@ SquareMatrix::QR() const {
 
         for (int j = k; j < n; j++) {
 
-            if (V[k][k] != 0.) {
-                element_t s = 0.;
+            if (!isZero(V[k][k])) {
 
+                element_t s = 0.;
                 for (int i = k; i < n; i++) { s += V[i][k] * Q[i][j]; }
                 s = -s / V[k][k];
 
