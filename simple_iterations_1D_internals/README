@@ -1,5 +1,9 @@
 the same as ../simple_iterations, but having inner 1d matrix representation for faster calculations
 
+apps:
+qriterations - openmp version
+qriterations1 - non-openmp version (for comparison)
+
 examples:
 
 ./qriterations test100.txt none         :    eigenvalues are 100., 99., 98., ..., 1.

@@ -8,6 +8,7 @@
  * @class QRIterations
  *
  * Perform shifted QR algorithm for a given square matrix M.
+ * Assuming a simple case when all eigenvalues of M are real.
  */
 class QRIterations {
 public:

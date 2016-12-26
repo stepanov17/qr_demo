@@ -3,6 +3,10 @@ the same as ../yet_another_JAMA_port, but having inner 1d matrix representation 
 nothing original, yet another (temporary) cpp port of JAMA's EigenvalueDecomposition
 (please see http://math.nist.gov/javanumerics/jama/ to get info about the JAMA authors)
 
+apps:
+eigcalc - openmp version
+eigcalc1 - non-openmp version (for comparison)
+
 examples:
 
 test500.txt: eigenvalues are 1.x250 times and 1.x250 times
