@@ -9,5 +9,6 @@ test500.txt: eigenvalues are 1.x250 times and 1.x250 times
 test1000.txt: eigenvalues are 1.x500 times and 100.x500 times
 test500symm.txt: eigenvalues are -1.x250 times and 3.x250 times
 
+test200.txt: eigenvalues are 1.+/-i, 2.+/-2.*i, ..., 100.+/-100.*i
 
 please execute "doxygen docs" to generate the docs (if required)
