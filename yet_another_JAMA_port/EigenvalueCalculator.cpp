@@ -21,7 +21,7 @@ EigenvalueCalculator::hypot(element_t a, element_t b) {
     if (std::abs(a) > std::abs(b)) {
         r = b / a;
         r = std::abs(a) * std::sqrt(1 + r * r);
-    } else if (b != 0) {
+    } else if (!isEq(b, 0.)) {
         r = a / b;
         r = std::abs(b) * std::sqrt(1 + r * r);
     } else {

@@ -95,9 +95,6 @@ SquareMatrix::Hessenberg() const {
 
             element_t ai[n], ak[n];
 
-            // it makes little sense to add these pragmas here as the transform
-            // is performed only once at the beginning of QR iterations
-
             #pragma omp parallel for
             for (int j = 0; j < n; j++) {
                 ak[j] = c * a[k][j] - s * a[i][j];

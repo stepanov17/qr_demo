@@ -31,16 +31,16 @@ public:
     SquareMatrix(std::size_t n = 0);
 
     /**
-     * Get reference to (i, j) element of the matrix.
+     * Get a reference to (i, j)-element of the matrix.
      *
-     * @return the reference to (i, j) element
+     * @return the reference to (i, j)-element
      */
     element_t &at(int i, int j) { return data[i * n + j]; }
 
     /**
-     * Get constant reference to (i, j) element of the matrix.
+     * Get a constant reference to (i, j)-element of the matrix.
      *
-     * @return the constant reference to (i, j) element
+     * @return the constant reference to (i, j)-element
      */
     const element_t &at(int i, int j) const { return data[i * n + j]; }
 

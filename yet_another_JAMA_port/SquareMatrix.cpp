@@ -20,16 +20,15 @@ SquareMatrix::SquareMatrix(std::size_t n_p) : n(n_p) {
     data.assign(n, tmp);
 }
 
-inline static SquareMatrix::element_t
-getEps() { return std::numeric_limits<SquareMatrix::element_t>::epsilon(); }
-
 bool
 SquareMatrix::isSymmetric() const {
+
+    element_t eps = std::numeric_limits<SquareMatrix::element_t>::epsilon();
 
     bool isSymm = true;
     for (int j = 0; (j < n) && isSymm; ++j) {
         for (int i = 0; (i < n) && isSymm; ++i) {
-            if (std::abs(data[i][j] - data[j][i]) > getEps()) { return false; }
+            if (std::abs(data[i][j] - data[j][i]) > eps) { return false; }
         }
     }
     return true;

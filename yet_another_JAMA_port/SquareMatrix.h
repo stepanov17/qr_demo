@@ -14,7 +14,7 @@ public:
     /**
      *  Matrix element type.
      */
-    typedef long double element_t;
+    typedef /*long*/ double element_t;
 
     /**
      * Matrix row type.

@@ -84,9 +84,6 @@ SquareMatrix::Hessenberg() const {
 
             element_t ai[n], ak[n];
 
-            // it makes little sense to add these pragmas here as the transform
-            // is performed only once at the beginning of QR iterations
-
             #pragma omp parallel for
             for (int j = 0; j < n; j++) {
                 ak[j] = c * H.at(k, j) - s * H.at(i, j);
@@ -136,8 +133,6 @@ SquareMatrix::QR() const {
             // form k-th Householder vector
             if (V.at(k, k) < 0.) { norm = -norm; }
 
-            //slow down
-            //#pragma omp parallel for shared(V)
             for (int i = k; i < n; i++) {
                 V.at(i, k) /= norm;
             }
@@ -147,8 +142,6 @@ SquareMatrix::QR() const {
             for (int j = k + 1; j < n; j++) {
                 element_t s = 0.;
 
-                //slow down
-                //#pragma omp parallel for shared(V) reduction(+:s)
                 for (int i = k; i < n; i++) {
                     s += V.at(i, k) * V.at(i, j);
                 }
@@ -175,13 +168,9 @@ SquareMatrix::QR() const {
             if (!isZero(V.at(k, k)) != 0.) {
                 element_t s = 0.;
 
-                //slow down
-                //#pragma omp parallel for shared(V, Q) reduction(+:s)
                 for (int i = k; i < n; i++) { s += V.at(i, k) * Q.at(i, j); }
                 s = -s / V.at(k, k);
 
-                //slow down
-                //#pragma omp parallel for shared(V)
                 for (int i = k; i < n; i++) {
                     Q.at(i, j) += s * V.at(i, k);
                 }
@@ -245,7 +234,6 @@ SquareMatrix::read(const char *path) {
         } else if (n != row.size()) {
             throw std::range_error("invalid matrix data");
         }
-        //data.push_back(row);
         data.insert(data.end(), row.begin(), row.end());
         ++nRows;
     }
