@@ -43,6 +43,8 @@ public:
      */
     std::pair<SquareMatrix::row_t, SquareMatrix::row_t> getEigenvalues();
 
+    // TODO: return eigenvectors as well
+
 
 private:
 

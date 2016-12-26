@@ -167,7 +167,6 @@ EigenvalueCalculator::Tridiagonalize() {
     }
 
     // accumulate transformations
-    //#pragma omp parallel for
     for (int i = 0; i < n - 1; i++) {
         V.at(n - 1, i) = V.at(i, i);
         V.at(i, i) = 1.;
@@ -324,7 +323,6 @@ EigenvalueCalculator::toHessenberg() {
             // compute Householder transformation
 
             element_t h = 0.;
-            //#pragma omp parallel for
             for (int i = high; i >= m; i--) {
                 element_t o = H.at(i, m - 1) / scale;
                 ort[i] = o;
@@ -378,7 +376,6 @@ EigenvalueCalculator::toHessenberg() {
         }
     }
 
-    //#pragma omp parallel for
     for (int m = high - 1; m >= low + 1; m--) {
         if (!isEq(H.at(m, m - 1), 0.)) {
             #pragma omp parallel for
