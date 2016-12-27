@@ -14,22 +14,6 @@ EigenvalueCalculator::isEq(element_t x, element_t y) {
     return (std::abs(x - y) < std::numeric_limits<element_t>::epsilon());
 }
 
-SquareMatrix::element_t
-EigenvalueCalculator::hypot(element_t a, element_t b) {
-
-    element_t r;
-    if (std::abs(a) > std::abs(b)) {
-        r = b / a;
-        r = std::abs(a) * std::sqrt(1 + r * r);
-    } else if (!isEq(b, 0.)) {
-        r = a / b;
-        r = std::abs(b) * std::sqrt(1 + r * r);
-    } else {
-        r = 0.;
-    }
-    return r;
-}
-
 std::pair<SquareMatrix::element_t, SquareMatrix::element_t>
 EigenvalueCalculator::cdiv(element_t xr, element_t xi, element_t yr, element_t yi) {
 
@@ -225,7 +209,7 @@ EigenvalueCalculator::Diagonalize() {
                 // compute implicit shift
                 element_t g = eigRe[l];
                 element_t p = (eigRe[l + 1] - g) / (2. * eigIm[l]);
-                element_t r = hypot(p, 1.);
+                element_t r = std::hypot(p, 1.);
                 if (p < 0) { r = -r; }
                 eigRe[l] = eigIm[l] / (p + r);
                 eigRe[l + 1] = eigIm[l] * (p + r);
@@ -251,7 +235,7 @@ EigenvalueCalculator::Diagonalize() {
                     s2 = s;
                     g = c * eigIm[i];
                     h = c * p;
-                    r = hypot(p, eigIm[i]);
+                    r = std::hypot(p, eigIm[i]);
                     eigIm[i + 1] = s * r;
                     s = eigIm[i] / r;
                     c = p / r;
@@ -473,7 +457,7 @@ EigenvalueCalculator::toSchur() {
                 s = std::abs(x) + std::abs(z);
                 p = x / s;
                 q = z / s;
-                r = std::sqrt(p * p + q * q);
+                r = std::hypot(p, q);
                 p /= r;
                 q /= r;
 
@@ -623,9 +607,9 @@ EigenvalueCalculator::toSchur() {
                         p = H.at(k, j) + q * H.at(k + 1, j);
                         if (notlast) {
                             p += r * H.at(k + 2, j);
-                            H.at(k + 2, j) = H.at(k + 2, j) - p * z;
+                            H.at(k + 2, j) -= p * z;
                         }
-                        H.at(k, j) = H.at(k, j) - p * x;
+                        H.at(k, j) -= p * x;
                         H.at(k + 1, j) -= p * y;
                     }
 

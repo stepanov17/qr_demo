@@ -113,18 +113,6 @@ private:
     static inline bool isEq(element_t x, element_t y);
 
     /**
-     * Overflow/underflow safe
-     * \code
-     * hypot(a, b) = sqrt(a * a + b * b).
-     * \endcode
-     *
-     * @param a 1st argument
-     * @param b 2nd argument
-     * @return the hypot
-     */
-    static element_t hypot(element_t a, element_t b);
-
-    /**
      * Overflow/underflow safe complex division (xr + i * xi) / (yr + i * yi).
      *
      * @param xr real part of the 1st argument
