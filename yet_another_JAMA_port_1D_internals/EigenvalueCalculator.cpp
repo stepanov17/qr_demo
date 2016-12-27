@@ -107,9 +107,7 @@ EigenvalueCalculator::Tridiagonalize() {
         // scale to avoid under/overflow
         element_t scale = 0.;
         element_t h = 0.;
-        for (int k = 0; k < i; k++) {
-            scale += std::abs(eigRe[k]);
-        }
+        for (int k = 0; k < i; k++) { scale += std::abs(eigRe[k]); }
         if (isEq(scale, 0.)) {
             eigIm[i] = eigRe[i - 1];
             for (int j = 0; j < i; j++) {
@@ -129,7 +127,7 @@ EigenvalueCalculator::Tridiagonalize() {
             element_t g = std::sqrt(h);
             if (f > 0) { g = -g; }
             eigIm[i] = scale * g;
-            h = h - f * g;
+            h -= f * g;
             eigRe[i - 1] = f - g;
             for (int j = 0; j < i; j++) { eigIm[j] = 0.; }
 
@@ -168,6 +166,7 @@ EigenvalueCalculator::Tridiagonalize() {
 
     // accumulate transformations
     for (int i = 0; i < n - 1; i++) {
+
         V.at(n - 1, i) = V.at(i, i);
         V.at(i, i) = 1.;
         element_t h = eigRe[i + 1];
@@ -222,9 +221,7 @@ EigenvalueCalculator::Diagonalize() {
         // if m == l, eigRe[l] is an eigenvalue
         // otherwise, iterate
         if (m > l) {
-            int iter = 0;
             do {
-                iter = iter + 1;  // (could check iteration count here)
                 // compute implicit shift
                 element_t g = eigRe[l];
                 element_t p = (eigRe[l + 1] - g) / (2. * eigIm[l]);
@@ -261,7 +258,7 @@ EigenvalueCalculator::Diagonalize() {
                     p = c * eigRe[i] - s * g;
                     eigRe[i + 1] = h + s * (c * g + s * eigRe[i]);
 
-                    // Accumulate transformation.
+                    // accumulate transformation
                     for (int k = 0; k < n; k++) {
                         h = V.at(k, i + 1);
                         V.at(k, i + 1) = s * V.at(k, i) + c * h;
@@ -367,7 +364,7 @@ EigenvalueCalculator::toHessenberg() {
         }
     }
 
-    // accumulate transformations (Algol's ortran).
+    // accumulate transformations (Algol's ortran)
 
     #pragma omp parallel for
     for (int i = 0; i < n; i++) {
@@ -443,7 +440,7 @@ EigenvalueCalculator::toSchur() {
         // check for convergence
         // one root found
         if (l == n0) {
-            H.at(n0, n0) = H.at(n0, n0) + exshift;
+            H.at(n0, n0) += exshift;
             eigRe[n0] = H.at(n0, n0);
             eigIm[n0] = 0.;
             n0--;
@@ -451,11 +448,11 @@ EigenvalueCalculator::toSchur() {
         // two roots found
         } else if (l == n0 - 1) {
             w = H.at(n0, n0 - 1) * H.at(n0 - 1, n0);
-            p = (H.at(n0 - 1, n0 - 1) - H.at(n0, n0)) / 2.;
+            p = 0.5 * (H.at(n0 - 1, n0 - 1) - H.at(n0, n0));
             q = p * p + w;
             z = std::sqrt(std::abs(q));
-            H.at(n0, n0) = H.at(n0, n0) + exshift;
-            H.at(n0 - 1, n0 - 1) = H.at(n0 - 1, n0 - 1) + exshift;
+            H.at(n0, n0) += exshift;
+            H.at(n0 - 1, n0 - 1) += exshift;
             x = H.at(n0, n0);
 
             // real pair
@@ -477,8 +474,8 @@ EigenvalueCalculator::toSchur() {
                 p = x / s;
                 q = z / s;
                 r = std::sqrt(p * p + q * q);
-                p = p / r;
-                q = q / r;
+                p /= r;
+                q /= r;
 
                 // row modification
                 #pragma omp parallel for
@@ -512,7 +509,7 @@ EigenvalueCalculator::toSchur() {
                 eigIm[n0] = -z;
             }
 
-            n0 = n0 - 2;
+            n0 -= 2;
             iter = 0;
 
         // no convergence yet
@@ -556,7 +553,7 @@ EigenvalueCalculator::toSchur() {
                 }
             }
 
-            iter = iter + 1;
+            iter++;
 
             // look for two consecutive small sub-diagonal elements
             int m = n0 - 2;
@@ -568,9 +565,9 @@ EigenvalueCalculator::toSchur() {
                 q = H.at(m + 1, m + 1) - z - r - s;
                 r = H.at(m + 2, m + 1);
                 s = std::abs(p) + std::abs(q) + std::abs(r);
-                p = p / s;
-                q = q / s;
-                r = r / s;
+                p /= s;
+                q /= s;
+                r /= s;
                 if (m == l) {
                     break;
                 }
@@ -599,9 +596,9 @@ EigenvalueCalculator::toSchur() {
                     r = (notlast ? H.at(k + 2, k - 1) : 0.);
                     x = std::abs(p) + std::abs(q) + std::abs(r);
                     if (isEq(x, 0.)) { continue; }
-                    p = p / x;
-                    q = q / x;
-                    r = r / x;
+                    p /= x;
+                    q /= x;
+                    r /= x;
                 }
 
                 s = std::sqrt(p * p + q * q + r * r);
@@ -614,22 +611,22 @@ EigenvalueCalculator::toSchur() {
                     } else if (l != m) {
                         H.at(k, k - 1) = -H.at(k, k - 1);
                     }
-                    p = p + s;
+                    p += s;
                     x = p / s;
                     y = q / s;
                     z = r / s;
-                    q = q / p;
-                    r = r / p;
+                    q /= p;
+                    r /= p;
 
                     // row modification
                     for (int j = k; j < nn; j++) {
                         p = H.at(k, j) + q * H.at(k + 1, j);
                         if (notlast) {
-                            p = p + r * H.at(k + 2, j);
+                            p += r * H.at(k + 2, j);
                             H.at(k + 2, j) = H.at(k + 2, j) - p * z;
                         }
                         H.at(k, j) = H.at(k, j) - p * x;
-                        H.at(k + 1, j) = H.at(k + 1, j) - p * y;
+                        H.at(k + 1, j) -= p * y;
                     }
 
                     // column modification
@@ -637,10 +634,10 @@ EigenvalueCalculator::toSchur() {
                         p = x * H.at(i, k) + y * H.at(i, k + 1);
                         if (notlast) {
                             p += z * H.at(i, k + 2);
-                            H.at(i, k + 2) = H.at(i, k + 2) - p * r;
+                            H.at(i, k + 2) -= p * r;
                         }
-                        H.at(i, k) = H.at(i, k) - p;
-                        H.at(i, k + 1) = H.at(i, k + 1) - p * q;
+                        H.at(i, k) -= p;
+                        H.at(i, k + 1) -= p * q;
                     }
 
                     // accumulate transformations
@@ -649,10 +646,10 @@ EigenvalueCalculator::toSchur() {
                         element_t tmp = x * V.at(i, k) + y * V.at(i, k + 1);
                         if (notlast) {
                             tmp += z * V.at(i, k + 2);
-                            V.at(i, k + 2) = V.at(i, k + 2) - tmp * r;
+                            V.at(i, k + 2) -= tmp * r;
                         }
-                        V.at(i, k) = V.at(i, k) - tmp;
-                        V.at(i, k + 1) = V.at(i, k + 1) - tmp * q;
+                        V.at(i, k) -= tmp;
+                        V.at(i, k + 1) -= tmp * q;
                     }
                 }  // (s != 0)
             }  // k loop
@@ -707,7 +704,7 @@ EigenvalueCalculator::toSchur() {
                     t = std::abs(H.at(i, n0));
                     if ((EPS * t) * t > 1) {
                         for (int j = i; j <= n0; j++) {
-                            H.at(j, n0) = H.at(j, n0) / t;
+                            H.at(j, n0) /= t;
                         }
                     }
                 }
@@ -781,8 +778,8 @@ EigenvalueCalculator::toSchur() {
                     t = std::max(std::abs(H.at(i, n0 - 1)), std::abs(H.at(i, n0)));
                     if ((EPS * t) * t > 1) {
                         for (int j = i; j <= n0; j++) {
-                            H.at(j, n0 - 1) = H.at(j, n0 - 1) / t;
-                            H.at(j, n0) = H.at(j, n0) / t;
+                            H.at(j, n0 - 1) /= t;
+                            H.at(j, n0) /= t;
                         }
                     }
                 }

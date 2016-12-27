@@ -91,7 +91,7 @@ EigenvalueCalculator::getEigenvalues() {
         mH = mM;
 
         toHessenberg(); // reduce to Hessenberg form
-        toSchur(); // reduce to real Schur form.
+        toSchur(); // reduce to real Schur form
     }
 
     return std::make_pair(eigRe, eigIm);
@@ -132,7 +132,7 @@ EigenvalueCalculator::Tridiagonalize() {
             element_t g = std::sqrt(h);
             if (f > 0) { g = -g; }
             eigIm[i] = scale * g;
-            h = h - f * g;
+            h -= f * g;
             eigRe[i - 1] = f - g;
             for (int j = 0; j < i; j++) { eigIm[j] = 0.; }
 
@@ -171,6 +171,7 @@ EigenvalueCalculator::Tridiagonalize() {
 
     // accumulate transformations
     for (int i = 0; i < n - 1; i++) {
+
         V[n - 1][i] = V[i][i];
         V[i][i] = 1.;
         element_t h = eigRe[i + 1];
@@ -222,9 +223,7 @@ EigenvalueCalculator::Diagonalize() {
         // if m == l, d[l] is an eigenvalue
         // otherwise, iterate
         if (m > l) {
-            int iter = 0;
             do {
-                iter = iter + 1;  // (could check iteration count here)
                 // compute implicit shift
                 element_t g = eigRe[l];
                 element_t p = (eigRe[l + 1] - g) / (2. * eigIm[l]);
@@ -363,7 +362,7 @@ EigenvalueCalculator::toHessenberg() {
         }
     }
 
-    // accumulate transformations (Algol's ortran).
+    // accumulate transformations (Algol's ortran)
 
     //#pragma omp parallel for
     for (int i = 0; i < n; i++) {
@@ -439,7 +438,7 @@ EigenvalueCalculator::toSchur() {
         // check for convergence
         // one root found
         if (l == n0) {
-            H[n0][n0] = H[n0][n0] + exshift;
+            H[n0][n0] += exshift;
             eigRe[n0] = H[n0][n0];
             eigIm[n0] = 0.;
             n0--;
@@ -447,11 +446,11 @@ EigenvalueCalculator::toSchur() {
         // two roots found
         } else if (l == n0 - 1) {
             w = H[n0][n0 - 1] * H[n0 - 1][n0];
-            p = (H[n0 - 1][n0 - 1] - H[n0][n0]) / 2.;
+            p = 0.5 * (H[n0 - 1][n0 - 1] - H[n0][n0]);
             q = p * p + w;
             z = std::sqrt(std::abs(q));
-            H[n0][n0] = H[n0][n0] + exshift;
-            H[n0 - 1][n0 - 1] = H[n0 - 1][n0 - 1] + exshift;
+            H[n0][n0] += exshift;
+            H[n0 - 1][n0 - 1] += exshift;
             x = H[n0][n0];
 
             // real pair
@@ -473,8 +472,8 @@ EigenvalueCalculator::toSchur() {
                 p = x / s;
                 q = z / s;
                 r = std::sqrt(p * p + q * q);
-                p = p / r;
-                q = q / r;
+                p /= r;
+                q /= r;
 
                 // row modification
                 for (int j = n0 - 1; j < nn; j++) {
@@ -505,7 +504,7 @@ EigenvalueCalculator::toSchur() {
                 eigIm[n0] = -z;
             }
 
-            n0 = n0 - 2;
+            n0 -= 2;
             iter = 0;
 
         // no convergence yet
@@ -549,7 +548,7 @@ EigenvalueCalculator::toSchur() {
                 }
             }
 
-            iter = iter + 1;
+            iter++;
 
             // look for two consecutive small sub-diagonal elements
             int m = n0 - 2;
@@ -592,9 +591,9 @@ EigenvalueCalculator::toSchur() {
                     r = (notlast ? H[k + 2][k - 1] : 0.);
                     x = std::abs(p) + std::abs(q) + std::abs(r);
                     if (isEq(x, 0.)) { continue; }
-                    p = p / x;
-                    q = q / x;
-                    r = r / x;
+                    p /= x;
+                    q /= x;
+                    r /= x;
                 }
 
                 s = std::sqrt(p * p + q * q + r * r);
@@ -607,44 +606,44 @@ EigenvalueCalculator::toSchur() {
                     } else if (l != m) {
                         H[k][k - 1] = -H[k][k - 1];
                     }
-                    p = p + s;
+                    p += s;
                     x = p / s;
                     y = q / s;
                     z = r / s;
-                    q = q / p;
-                    r = r / p;
+                    q /= p;
+                    r /= p;
 
                     // row modification
                     for (int j = k; j < nn; j++) {
                         p = H[k][j] + q * H[k + 1][j];
                         if (notlast) {
-                            p = p + r * H[k + 2][j];
+                            p += r * H[k + 2][j];
                             H[k + 2][j] = H[k + 2][j] - p * z;
                         }
-                        H[k][j] = H[k][j] - p * x;
-                        H[k + 1][j] = H[k + 1][j] - p * y;
+                        H[k][j] -= p * x;
+                        H[k + 1][j] -= p * y;
                     }
 
                     // column modification
                     for (int i = 0; i <= std::min(n0, k + 3); i++) {
                         p = x * H[i][k] + y * H[i][k + 1];
                         if (notlast) {
-                            p = p + z * H[i][k + 2];
-                            H[i][k + 2] = H[i][k + 2] - p * r;
+                            p += z * H[i][k + 2];
+                            H[i][k + 2] -= p * r;
                         }
-                        H[i][k] = H[i][k] - p;
-                        H[i][k + 1] = H[i][k + 1] - p * q;
+                        H[i][k] -= p;
+                        H[i][k + 1] -= p * q;
                     }
 
                     // accumulate transformations
                     for (int i = low; i <= high; i++) {
                         p = x * V[i][k] + y * V[i][k + 1];
                         if (notlast) {
-                            p = p + z * V[i][k + 2];
-                            V[i][k + 2] = V[i][k + 2] - p * r;
+                            p += z * V[i][k + 2];
+                            V[i][k + 2] -= p * r;
                         }
-                        V[i][k] = V[i][k] - p;
-                        V[i][k + 1] = V[i][k + 1] - p * q;
+                        V[i][k] -= p;
+                        V[i][k + 1] -= p * q;
                     }
                 }  // (s != 0)
             }  // k loop
