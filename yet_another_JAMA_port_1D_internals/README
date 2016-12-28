@@ -9,7 +9,7 @@ eigcalc1 - non-openmp version (for comparison)
 
 examples:
 
-test500.txt: eigenvalues are 1.x250 times and 1.x250 times
+test500.txt: eigenvalues are 1.x250 times and 10.x250 times
 test1000.txt: eigenvalues are 1.x500 times and 100.x500 times
 test500symm.txt: eigenvalues are -1.x250 times and 3.x250 times
 
