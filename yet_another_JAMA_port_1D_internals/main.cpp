@@ -12,14 +12,24 @@ int main(int argc, char** argv) {
 
     SquareMatrix M;
     try {
+        std::cout << "reading data...  ";
         M.read(argv[1]);
     } catch (std::exception &ex) {
-        std::cerr << ex.what() << std::endl;
+        std::cerr << "ERROR: " << ex.what() << std::endl;
         return 1;
     }
+    std::cout << "done. matrix order is " << M.getN() << std::endl;
+    std::cout << "calculating eigenvalues..." << std::endl;
 
-    EigenvalueCalculator calc(M);
-    std::pair<SquareMatrix::data_t, SquareMatrix::data_t> ev = calc.getEigenvalues();
+    std::pair<SquareMatrix::data_t, SquareMatrix::data_t> ev;
+
+    try {
+        EigenvalueCalculator calc(M);
+        ev = calc.getEigenvalues();
+    } catch (std::exception &ex) {
+        std::cerr << "ERROR: " << ex.what() << std::endl;
+        return 1;
+    }
 
     // check real parts
     std::cout << "real parts:" << std::endl;

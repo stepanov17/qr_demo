@@ -348,7 +348,6 @@ EigenvalueCalculator::toHessenberg() {
 
     // accumulate transformations (Algol's ortran)
 
-    //#pragma omp parallel for
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             V[i][j] = (i == j ? 1. : 0.);

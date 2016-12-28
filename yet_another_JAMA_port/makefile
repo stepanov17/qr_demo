@@ -1,6 +1,6 @@
 SRC=main.cpp SquareMatrix.cpp EigenvalueCalculator.cpp
 CC=g++
-CXXFLAGS=-std=c++11 -fopenmp
+CXXFLAGS=-std=c++11
 APP=eigcalc
 
 all: $(APP)

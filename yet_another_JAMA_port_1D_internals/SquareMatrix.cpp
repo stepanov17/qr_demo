@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include <limits>
+#include <string>
 
 
 
@@ -21,7 +22,7 @@ SquareMatrix::SquareMatrix(std::size_t n_p) : n(n_p) {
 
 bool
 SquareMatrix::isSymmetric() const {
-    
+
     element_t eps = std::numeric_limits<SquareMatrix::element_t>::epsilon();
 
     bool isSymm = true;
@@ -44,7 +45,7 @@ SquareMatrix::read(const char *path) {
 
     std::string ln;
     bool firstLine = true;
-    
+
     int nRows = 0;
     while (std::getline(f, ln)) {
 
@@ -57,12 +58,12 @@ SquareMatrix::read(const char *path) {
             if (n < 1) {
                 throw std::range_error("invalid matrix data");
             } else if (n > MAXN) {
-                throw std::range_error("max order is exceeded");
+                throw std::range_error(
+                    "max order " + std::to_string(MAXN) + " is exceeded");
             }
         } else if (n != row.size()) {
             throw std::range_error("invalid matrix data");
         }
-        //data.push_back(row);
         data.insert(data.end(), row.begin(), row.end());
         ++nRows;
     }
