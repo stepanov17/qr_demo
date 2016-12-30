@@ -261,7 +261,6 @@ EigenvalueCalculator::Diagonalize() {
     }
 
     // sort eigenvalues and corresponding vectors
-    #pragma omp parallel for
     for (int i = 0; i < n - 1; i++) {
         int k = i;
         element_t p = eigRe[i];
@@ -274,10 +273,9 @@ EigenvalueCalculator::Diagonalize() {
         if (k != i) {
             eigRe[k] = eigRe[i];
             eigRe[i] = p;
+            #pragma omp parallel for
             for (int j = 0; j < n; j++) {
-                p = V.at(j, i);
-                V.at(j, i) = V.at(j, k);
-                V.at(j, k) = p;
+                std::swap(V.at(j, i), V.at(j, k));
             }
         }
     }
@@ -321,12 +319,12 @@ EigenvalueCalculator::toHessenberg() {
 
             #pragma omp parallel for
             for (int j = m; j < n; j++) {
-                element_t f = 0.;
 
+                element_t f = 0.;
                 for (int i = high; i >= m; i--) {
                     f += ort[i] * H.at(i, j);
                 }
-                f = f / h;
+                f /= h;
                 for (int i = m; i <= high; i++) {
                     H.at(i, j) -= f * ort[i];
                 }
@@ -338,7 +336,7 @@ EigenvalueCalculator::toHessenberg() {
                 for (int j = high; j >= m; j--) {
                     f += ort[j] * H.at(i, j);
                 }
-                f = f / h;
+                f /= h;
                 for (int j = m; j <= high; j++) {
                     H.at(i, j) -= f * ort[j];
                 }
@@ -670,7 +668,7 @@ EigenvalueCalculator::toSchur() {
                             H.at(i, n0) = -r / (EPS * norm);
                         }
 
-                        // solve real equations
+                    // solve real equations
                     } else {
                         x = H.at(i, i + 1);
                         y = H.at(i + 1, i);

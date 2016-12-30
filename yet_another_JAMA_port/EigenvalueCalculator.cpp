@@ -275,9 +275,7 @@ EigenvalueCalculator::Diagonalize() {
             eigRe[k] = eigRe[i];
             eigRe[i] = p;
             for (int j = 0; j < n; j++) {
-                p = V[j][i];
-                V[j][i] = V[j][k];
-                V[j][k] = p;
+                std::swap(V[j][i], V[j][k]);
             }
         }
     }
