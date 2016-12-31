@@ -92,7 +92,7 @@ int main(int argc, char** argv) {
     for (auto v: diag) { std::cout << v << " "; }
     std::cout << std::endl;
     // or
-    // M.print();
+    //std::cout << M << std::endl;
 
     return 0;
 }

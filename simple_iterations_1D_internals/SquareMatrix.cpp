@@ -179,7 +179,7 @@ SquareMatrix::QR() const {
     } // Q
 
     // form matrix R
-    #pragma omp parallel for //?
+    #pragma omp parallel for
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             if (i < j) {
@@ -193,17 +193,6 @@ SquareMatrix::QR() const {
     }
 
     return std::make_pair(Q, R);
-}
-
-void
-SquareMatrix::print() const {
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            std::cout << this->at(i, j) << " ";
-        }
-        std::cout << std::endl;
-    }
 }
 
 void
@@ -241,4 +230,19 @@ SquareMatrix::read(const char *path) {
     else if (nRows == 0) { throw std::range_error("empty matrix"); }
 
     f.close();
+}
+
+
+std::ostream&
+operator <<(std::ostream& os, const SquareMatrix &M) {
+
+    int n = M.getN();
+    os << n << "x" << n << " matrix" << std::endl;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            os << M.at(i, j) << " ";
+        }
+        os << std::endl;
+    }
+    return os;
 }

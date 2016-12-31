@@ -1,7 +1,14 @@
+/**
+ * @file SquareMatrix.h
+ *
+ * SquareMatrix class header file.
+ */
+
 #ifndef SQUAREMATRIX_H
 #define SQUAREMATRIX_H
 
 #include <vector>
+#include <iostream>
 
 /**
  * @class SquareMatrix
@@ -92,11 +99,6 @@ public:
     std::pair<SquareMatrix, SquareMatrix> QR() const;
 
     /**
-     * Print the matrix to a console.
-     */
-    void print() const;
-
-    /**
      * Read a matrix from a file. It is supposed that the file contains
      * element values separated by spaces (a line per row).
      * No empty lines are allowed.
@@ -115,5 +117,15 @@ private:
     int n;
     data_t data;
 };
+
+/**
+ * Stream insertion operator. Insert matrix M to an output stream.
+ *
+ * @param os the output stream
+ * @param M the matrix to be inserted into the stream
+ * @return the updated stream
+ */
+std::ostream& operator <<(std::ostream &os, const SquareMatrix &M);
+
 
 #endif /* SQUAREMATRIX_H */

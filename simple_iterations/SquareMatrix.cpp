@@ -195,7 +195,7 @@ SquareMatrix::QR() const {
     } // Q
 
     // form matrix R
-    #pragma omp parallel for //?
+    #pragma omp parallel for
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             if (i < j) {
@@ -209,17 +209,6 @@ SquareMatrix::QR() const {
     }
 
     return std::make_pair(QM, RM);
-}
-
-void
-SquareMatrix::print() const {
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            std::cout << data[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
 }
 
 void
@@ -254,4 +243,20 @@ SquareMatrix::read(const char *path) {
     if (data.size() != n) { throw std::range_error("the matrix must be square"); }
 
     f.close();
+}
+
+
+std::ostream&
+operator <<(std::ostream& os, const SquareMatrix &M) {
+
+    int n = M.getN();
+    const SquareMatrix::data_t &data = M.getData();
+    os << n << "x" << n << " matrix" << std::endl;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            os << data[i][j] << " ";
+        }
+        os << std::endl;
+    }
+    return os;
 }
